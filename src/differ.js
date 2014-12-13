@@ -11,14 +11,6 @@ function getPathFromObject(obj, path) {
   return result;
 }
 
-function deletePathFromObject(obj, path) {
-  path = _.clone(path);
-  while(path.length > 1) {
-    obj = obj[path.shift()];
-  }
-  delete obj[path.shift()];
-}
-
 function checkForDeletions(left, right, response) {
   walker(new WalkerObject(), left, function(leftValue, path) {
     var rightValue;
@@ -30,6 +22,7 @@ function checkForDeletions(left, right, response) {
           path: path,
           oldValue: leftValue
         });
+        return true; // skips children
       }
     }
   });
@@ -47,6 +40,7 @@ function checkForAdditions(left, right, response) {
           path: path,
           newValue: rightValue
         });
+        return true; // skips children
       }
     }
   });
@@ -78,39 +72,5 @@ module.exports = function(left, right) {
   response = checkForDeletions(left, right, response);
   response = checkForAdditions(left, right, response);
   response = checkForUpdates(left, right, response);
-  // walker(new WalkerObject(), left, function(leftValue, path) {
-  //   var rightValue;
-  //   if(path.length) {
-  //     rightValue = getPathFromObject(right, path);
-  //     if(rightValue === undefined) {
-  //       response.push({
-  //         type: 'delete',
-  //         path: path,
-  //         oldValue: leftValue
-  //       });
-  //     } else {
-  //       if(typeof leftValue !== 'object') {
-  //         if(leftValue !== rightValue) {
-  //           response.push({
-  //             type: 'update',
-  //             path: path,
-  //             oldValue: leftValue,
-  //             newValue: rightValue
-  //           });
-  //         }
-  //         deletePathFromObject(right, path);
-  //       }
-  //     }
-  //   }
-  // });
-  // walker(new WalkerObject(), right, function(value, path) {
-  //   if(typeof value !== 'object') {
-  //     response.push({
-  //       type: 'add',
-  //       path: path,
-  //       newValue: value
-  //     });
-  //   }
-  // });
   return response;
 };

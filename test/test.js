@@ -27,7 +27,7 @@ describe('Differ', function() {
     expect(differ([1], [1])).to.deep.equal([]);
   });
 
-  it('should recognise property additions on objects', function() {
+  it('should recognise additions to objects', function() {
     var left = {};
     var right = {
       test: 123
@@ -42,26 +42,45 @@ describe('Differ', function() {
     expect(differ(left, right)).to.deep.equal(expectedResult);
   });
 
-  // it('should recognise object property additions on object', function() {
-  //   var left = {};
-  //   var right = {
-  //     first: {
-  //       second: 123
-  //     }
-  //   };
-  //   var expectedResult = [
-  //     {
-  //       type: 'add',
-  //       path: ['first'],
-  //       newValue: {
-  //         second: 123
-  //       }
-  //     }
-  //   ];
-  //   expect(differ(left, right)).to.deep.equal(expectedResult);
-  // });
+  it('should recognise additions on nested values', function() {
+    var left = {
+      first: {}
+    };
+    var right = {
+      first: {
+        second: 123
+      }
+    };
+    var expectedResult = [
+      {
+        type: 'add',
+        path: ['first', 'second'],
+        newValue: 123
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
 
-  it('should recognise property deletions on objects', function() {
+  it('should recognise additions of whole objects', function() {
+    var left = {};
+    var right = {
+      first: {
+        second: 123
+      }
+    };
+    var expectedResult = [
+      {
+        type: 'add',
+        path: ['first'],
+        newValue: {
+          second: 123
+        }
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
+
+  it('should recognise deletions to objects', function() {
     var left = {
       test: 123
     };
@@ -76,7 +95,45 @@ describe('Differ', function() {
     expect(differ(left, right)).to.deep.equal(expectedResult);
   });
 
-  it('should recognise property updates on objects', function() {
+  it('should recognise deletions of nested values', function() {
+    var left = {
+      first: {
+        second: 123
+      }
+    };
+    var right = {
+      first: {}
+    };
+    var expectedResult = [
+      {
+        type: 'delete',
+        path: ['first', 'second'],
+        oldValue: 123
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
+
+  it('should recognise deletions of whole objects', function() {
+    var left = {
+      first: {
+        second: 123
+      }
+    };
+    var right = {};
+    var expectedResult = [
+      {
+        type: 'delete',
+        path: ['first'],
+        oldValue: {
+          second: 123
+        }
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
+
+  it('should recognise updates to objects', function() {
     var left = {
       test: 123
     };
@@ -88,6 +145,52 @@ describe('Differ', function() {
         type: 'update',
         path: ['test'],
         oldValue: 123,
+        newValue: 456
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
+
+  it('should recognise updates on nested values', function() {
+    var left = {
+      first: {
+        second: 123
+      }
+    };
+    var right = {
+      first: {
+        second: 456
+      }
+    };
+    var expectedResult = [
+      {
+        type: 'update',
+        path: ['first', 'second'],
+        oldValue: 123,
+        newValue: 456
+      }
+    ];
+    expect(differ(left, right)).to.deep.equal(expectedResult);
+  });
+
+  it('should treat updates of whole objects as additions and deletions', function() {
+    var left = {
+      first: {
+        second: 123
+      }
+    };
+    var right = {
+      first: {
+        third: 456
+      }
+    };
+    var expectedResult = [{
+        type: 'delete',
+        path: ['first', 'second'],
+        oldValue: 123
+      }, {
+        type: 'add',
+        path: ['first', 'third'],
         newValue: 456
       }
     ];
