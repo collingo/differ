@@ -249,20 +249,47 @@ describe('Differ', function() {
 
   });
 
-  describe('reorders', function() {
+  describe('reorders in arrays', function() {
 
-    it('in arrays should be interpretted as updates', function() {
-      var left = [987, 123, 456];
-      var right = [987, 456, 123];
+    it('should be interpretted as updates', function() {
+      var left = [123, 456];
+      var right = [456, 123];
       var expectedResult = [
         {
           type: 'update',
-          path: [1],
+          path: [0],
           newValue: 456,
           oldValue: 123
         }, {
           type: 'update',
-          path: [2],
+          path: [1],
+          newValue: 123,
+          oldValue: 456
+        }
+      ];
+      expect(differ(left, right)).to.deep.equal(expectedResult);
+    });
+
+    it('of nested items with matching keys should be interpretted as updates', function() {
+      var left = [{
+        test: 123
+      }, {
+        test: 456
+      }];
+      var right = [{
+        test: 456
+      }, {
+        test: 123
+      }];
+      var expectedResult = [
+        {
+          type: 'update',
+          path: [0, 'test'],
+          newValue: 456,
+          oldValue: 123
+        }, {
+          type: 'update',
+          path: [1, 'test'],
           newValue: 123,
           oldValue: 456
         }
