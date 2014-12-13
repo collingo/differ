@@ -1,12 +1,11 @@
 var walker = require('walker');
 var WalkerObject = require('walker-object');
-var _ = require('lodash');
 
 function getPathFromObject(obj, path) {
   var result = obj;
-  path = _.clone(path);
-  while(result && path.length) {
-    result = result[path.shift()];
+  tempPath = [].concat(path);
+  while(result && tempPath.length) {
+    result = result[tempPath.shift()];
   }
   return result;
 }
@@ -53,13 +52,17 @@ function checkForUpdates(left, right, response) {
     if(path.length) {
       rightValue = getPathFromObject(right, path);
       if(typeof leftValue !== 'object') {
-        if(rightValue !== undefined && leftValue !== rightValue) {
-          response.push({
-            type: 'update',
-            path: path,
-            oldValue: leftValue,
-            newValue: rightValue
-          });
+        if(rightValue === undefined) {
+          return true;
+        } else {
+          if(leftValue !== rightValue) {
+            response.push({
+              type: 'update',
+              path: path,
+              oldValue: leftValue,
+              newValue: rightValue
+            });
+          }
         }
       }
     }

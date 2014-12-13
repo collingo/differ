@@ -7,7 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "lodash": "^2.4.1",
     "walker": "git+https://git@github.com/collingo/walker",
     "walker-object": "git+https://git@github.com/collingo/walker-object"
   },

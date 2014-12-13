@@ -249,22 +249,27 @@ describe('Differ', function() {
 
   });
 
-  // describe('reorders', function() {
+  describe('reorders', function() {
 
-  //   it('in arrays', function() {
-  //     var left = [123, 456];
-  //     var right = [456, 123];
-  //     var expectedResult = [
-  //       {
-  //         type: 'update',
-  //         path: [0],
-  //         oldValue: 123,
-  //         newValue: 456
-  //       }
-  //     ];
-  //     expect(differ(left, right)).to.deep.equal(expectedResult);
-  //   });
+    it('in arrays should be interpretted as updates', function() {
+      var left = [987, 123, 456];
+      var right = [987, 456, 123];
+      var expectedResult = [
+        {
+          type: 'update',
+          path: [1],
+          newValue: 456,
+          oldValue: 123
+        }, {
+          type: 'update',
+          path: [2],
+          newValue: 123,
+          oldValue: 456
+        }
+      ];
+      expect(differ(left, right)).to.deep.equal(expectedResult);
+    });
 
-  // });
+  });
 
 });
