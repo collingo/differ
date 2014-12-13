@@ -82,6 +82,19 @@ describe('Differ', function() {
       expect(differ(left, right)).to.deep.equal(expectedResult);
     });
 
+    it('to arrays', function() {
+      var left = [];
+      var right = [123];
+      var expectedResult = [
+        {
+          type: 'add',
+          path: [0],
+          newValue: 123
+        }
+      ];
+      expect(differ(left, right)).to.deep.equal(expectedResult);
+    });
+
   });
 
   describe('deletions', function() {
@@ -134,6 +147,19 @@ describe('Differ', function() {
           oldValue: {
             second: 123
           }
+        }
+      ];
+      expect(differ(left, right)).to.deep.equal(expectedResult);
+    });
+
+    it('from arrays', function() {
+      var left = [123];
+      var right = [];
+      var expectedResult = [
+        {
+          type: 'delete',
+          path: [0],
+          oldValue: 123
         }
       ];
       expect(differ(left, right)).to.deep.equal(expectedResult);
@@ -207,6 +233,38 @@ describe('Differ', function() {
       expect(differ(left, right)).to.deep.equal(expectedResult);
     });
 
+    it('to arrays', function() {
+      var left = [123];
+      var right = [456];
+      var expectedResult = [
+        {
+          type: 'update',
+          path: [0],
+          oldValue: 123,
+          newValue: 456
+        }
+      ];
+      expect(differ(left, right)).to.deep.equal(expectedResult);
+    });
+
   });
+
+  // describe('reorders', function() {
+
+  //   it('in arrays', function() {
+  //     var left = [123, 456];
+  //     var right = [456, 123];
+  //     var expectedResult = [
+  //       {
+  //         type: 'update',
+  //         path: [0],
+  //         oldValue: 123,
+  //         newValue: 456
+  //       }
+  //     ];
+  //     expect(differ(left, right)).to.deep.equal(expectedResult);
+  //   });
+
+  // });
 
 });
